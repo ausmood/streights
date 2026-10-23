@@ -5,10 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Вес">
+<meta name="apple-mobile-web-app-title" content="Streights">
+<meta name="application-name" content="Streights">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#f4ecdf" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#2a211b" media="(prefers-color-scheme: dark)">
-<title>Вес семьи</title>
+<title>Streights</title>
 <style>
   :root {
     color-scheme: light dark;
@@ -296,6 +299,8 @@
       </div>
     </div>
   </section>
+
+  <button class="link hidden" id="installBtn" style="align-self:center">Установить приложение</button>
 
   <button class="nav" id="toCharts" aria-label="Перейти к графикам">
     Графики
@@ -727,10 +732,27 @@ function pickPerson(id) {
   start(p);
 })();
 
+function setManifest(id) {
+  let l = document.querySelector('link[rel="manifest"]');
+  if (!l) { l = document.createElement('link'); l.rel = 'manifest'; document.head.appendChild(l); }
+  l.href = `manifest-${id}.webmanifest`;          // у каждого свой start_url с ?u=имя
+}
+
+let installEvent = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); installEvent = e;
+  if (!window.matchMedia('(display-mode: standalone)').matches) $('installBtn').classList.remove('hidden');
+});
+window.addEventListener('appinstalled', () => { installEvent = null; $('installBtn').classList.add('hidden'); toast('Установлено'); });
+
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
 function start(p) {
   current = p.id;
+  setManifest(p.id);
   document.documentElement.style.setProperty('--accent', p.color);
-  document.title = `Вес: ${p.name}`;
   day = keyOf(today()); followToday = true;
   renderDate();
 
@@ -754,6 +776,12 @@ function start(p) {
     if (b && !b.disabled) pickDay(b.dataset.k);
   });
   $('save').addEventListener('click', save);
+  $('installBtn').addEventListener('click', async () => {
+    if (!installEvent) return;
+    installEvent.prompt();
+    await installEvent.userChoice.catch(() => {});
+    installEvent = null; $('installBtn').classList.add('hidden');
+  });
   $('w').addEventListener('keydown', e => { if (e.key === 'Enter') save(); });
   $('w').addEventListener('input', () => { if ($('hint').classList.contains('err')) setHint(''); });
   $('editBtn').addEventListener('click', () => { mode = 'edit'; render(); $('w').focus(); $('w').select(); });
