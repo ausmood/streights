@@ -48,6 +48,7 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  html.typing { scroll-snap-type: none; }      /* пока открыта клавиатура, страница не «отпрыгивает» назад */
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
     background: var(--bg);
@@ -976,6 +977,8 @@ function start(p) {
     const b = e.target.closest('.cal-day');
     if (b && !b.disabled) pickDay(b.dataset.k);
   });
+  document.addEventListener('focusin', e => { if (e.target.matches('input, textarea')) document.documentElement.classList.add('typing'); });
+  document.addEventListener('focusout', () => document.documentElement.classList.remove('typing'));
   $('save').addEventListener('click', save);
   $('installBtn').addEventListener('click', async () => {
     if (!installEvent) return;
