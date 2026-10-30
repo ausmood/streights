@@ -70,9 +70,14 @@
 
   /* ---------- Экран 1 ---------- */
   .entry { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; }
-  .date { font-size: 16px; color: var(--muted); margin-bottom: 6px; }
-  .entry label { display: block; font-size: 20px; font-weight: 600; margin-bottom: 6px; }
-  .field { display: flex; align-items: baseline; justify-content: center; gap: 8px; }
+  .entry-head { margin-bottom: 0; }
+  #inputView { margin-top: 6px; }      /* приветствие почти вплотную к дате, как было */
+  #savedView { margin-top: 20px; }     /* а кружок с галочкой отодвинут от даты */
+  .date { font-size: 16px; line-height: 1.5; color: var(--muted); }
+  .entry label { display: block; font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  /* число стоит ровно по центру, «кг» уходит вправо и не сдвигает его */
+  .field { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: baseline; column-gap: 8px; }
+  .field input { grid-column: 2; }
   .field input {
     width: 5ch; font-size: 76px; font-weight: 700; text-align: center;
     font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
@@ -83,7 +88,7 @@
   .field input::placeholder { color: var(--line); opacity: 1; }
   .field input:focus { border-bottom-color: var(--accent); }
   .field input:focus::placeholder { color: transparent; }
-  .field span { font-size: 26px; color: var(--muted); }
+  .field span { grid-column: 3; justify-self: start; font-size: 26px; color: var(--muted); }
   .link { background: none; border: 0; color: var(--muted); font-size: 14px; text-decoration: underline; cursor: pointer; padding: 4px 6px; }
   .days { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 6px 0 10px; }
   .chip { border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
@@ -113,7 +118,7 @@
   .cal-day.sel small { color: inherit; }
   .cal-day:disabled { opacity: .35; cursor: default; }
   .chip.on { background-color: var(--btn); border-color: var(--btn); color: var(--on-btn); }
-  .hint { min-height: 40px; margin: 10px 0 12px; font-size: 14px; color: var(--muted); line-height: 1.4; }
+  .hint { min-height: 22px; margin: 10px 0 14px; font-size: 14px; color: var(--muted); line-height: 1.4; }
   .hint.err { color: var(--err); }
   .save {
     width: 100%; font-size: 18px; font-weight: 600; padding: 15px;
@@ -131,11 +136,12 @@
   .check svg { width: 44px; height: 44px; }
   @keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .check { animation: none; } }
-  .saved-title { font-size: 26px; font-weight: 700; }
-  .saved-weight { font-size: 18px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
-  .saved-diff { font-size: 16px; color: var(--muted); margin-top: 8px; font-variant-numeric: tabular-nums; }
-  .reaction { min-height: 28px; font-size: 20px; font-weight: 600; margin-top: 12px; }
-  .actions { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
+  .saved-title { font-size: 26px; font-weight: 700; line-height: 1.2; }
+  .saved-weight { font-size: 18px; color: var(--muted); margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .saved-diff { font-size: 16px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .reaction { font-size: 20px; font-weight: 600; margin-top: 12px; line-height: 1.3; }
+  .reaction:empty { display: none; }
+  .actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
   .ghost {
     background: transparent; border: 1.5px solid var(--line); color: var(--ink);
     border-radius: 12px; padding: 9px 16px; font-size: 15px; cursor: pointer;
@@ -156,10 +162,9 @@
   .nav.up { margin-bottom: 8px; }
 
   /* ---------- Экран 2 ---------- */
-  .screen-charts { padding-top: max(22px, env(safe-area-inset-top)); }
-  h2 { font-size: 15px; font-weight: 600; color: var(--muted); margin: 8px 0 10px; }
-  .rows { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-  .row { display: flex; gap: 8px; align-items: stretch; margin-bottom: 10px; }
+  h2 { font-size: 30px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin: 2px 0 12px; }
+  .rows { display: flex; flex-direction: column; }
+  .row { display: flex; gap: 8px; align-items: stretch; margin-bottom: 8px; }
   .blk { background: var(--surface); border-radius: 14px; border: 1.5px solid transparent; }
   .mmcol { flex: 0 0 58px; display: flex; flex-direction: column; gap: 8px; }
   .mmbox {
@@ -176,7 +181,7 @@
   .pane.open { flex: 1 1 0px; }
   .row.me .pane.open, .row.me .stats.open .sbox { border-color: var(--accent); }
   .stats {
-    flex: 0 0 58px; min-width: 0; display: flex; flex-direction: column; gap: 8px;
+    flex: 0 0 58px; min-width: 0; display: flex; flex-direction: column; gap: 6px;
     transition: flex .8s cubic-bezier(.4, 0, .2, 1);
   }
   .stats.open { flex: 1 1 0px; }
@@ -195,7 +200,7 @@
   .s-val small { font-size: 12px; font-weight: 500; color: var(--muted); }
   .s-line { font-size: 12px; line-height: 1.25; color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
   .stab { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: pointer; }
-  .face { padding: 12px 12px 8px; white-space: nowrap; }
+  .face { padding: 10px 12px 6px; white-space: nowrap; }
   .face .delta { overflow: hidden; text-overflow: ellipsis; }
   .pane .face { opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; }
   .pane.open .face { opacity: 1; visibility: visible; transition: opacity .45s .4s, visibility 0s; }
@@ -213,7 +218,7 @@
   .val small { font-size: 14px; font-weight: 500; color: var(--muted); }
   .delta { font-size: 13px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
 
-  .spark { display: block; width: 100%; height: 56px; margin-top: 6px; }
+  .spark { display: block; width: 100%; height: 56px; margin-top: 6px; overflow: visible; }
   .nodata { color: var(--muted); font-size: 13px; text-align: center; padding: 18px 0; }
   .empty { color: var(--muted); font-size: 14px; padding: 8px 0 10px; }
   .status { color: var(--muted); font-size: 14px; text-align: center; padding: 6px 0 12px; }
@@ -221,6 +226,45 @@
     margin-left: 6px; color: var(--ink); background: transparent; border: 1.5px solid var(--line);
     border-radius: 10px; padding: 6px 12px; cursor: pointer;
   }
+
+  /* стрелка к комментариям: видна только когда есть непрочитанный комментарий */
+  .arrow {
+    align-self: center; position: relative; background: transparent; border: 0; color: var(--muted);
+    padding: 8px 18px; cursor: pointer; border-radius: 12px;
+  }
+  .arrow svg { display: block; width: 26px; height: 26px; }
+  .arrow { display: flex; align-items: center; gap: 8px; }
+  .alert-tag { display: none; align-items: center; gap: 6px; font-size: 14px; }
+  .alert-tag .cdot { width: 8px; height: 8px; border-radius: 50%; background: var(--err); }
+  .arrow.alert { color: var(--ink); background: var(--surface); padding: 8px 16px 8px 14px; border-radius: 999px; }
+  .arrow.alert .alert-tag { display: inline-flex; }
+  .arrow.alert svg { animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @media (prefers-reduced-motion: reduce) { .arrow.alert svg { animation: none; } }
+
+  /* вкладка «Комментарии» */
+  .clist { display: flex; flex-direction: column; gap: 8px; }
+  #comments > .arrow { margin-top: auto; }
+  /* сверху у комментариев стрелки нет, оставляем столько же места, чтобы заголовки «Комментарии» и «Графики» стояли на одной высоте */
+  #comments::before { content: ""; display: block; flex: none; height: 42px; }
+  .ccard { padding: 14px; }
+  .c-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .c-date { font-size: 13px; color: var(--muted); text-align: right; }
+  .c-text { margin: 8px 0 12px; font-size: 17px; line-height: 1.35; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .c-empty { color: var(--muted); font-size: 14px; margin: 8px 0 2px; }
+  .c-hearts { display: flex; gap: 10px; flex-wrap: wrap; }
+  .heart {
+    display: flex; align-items: center; gap: 6px; border: 1.5px solid var(--line); background: transparent;
+    color: var(--muted); border-radius: 999px; padding: 5px 12px 5px 8px; font-size: 14px; cursor: pointer;
+  }
+  .heart svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+  .heart.on { border-color: var(--hc); color: var(--ink); }
+  .heart.on svg { fill: var(--hc); stroke: var(--hc); animation: pop .3s ease-out; }
+  .heart.offer { border-color: var(--hc); color: var(--ink); }
+  .heart.offer svg { stroke: var(--hc); }
+  span.heart { cursor: default; }
+  .chint { color: var(--muted); font-size: 13px; text-align: center; margin: 14px 0 0; line-height: 1.4; }
+  @media (prefers-reduced-motion: reduce) { .heart.on svg { animation: none; } }
 
   /* выбор человека, если ссылка без имени */
   .choose { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 12px; text-align: center; }
@@ -256,8 +300,22 @@
   </div>
 </main>
 
+<section class="screen" id="comments">
+  <h2>Комментарии</h2>
+  <div class="clist" id="clist"></div>
+  <p class="chint">Написать комментарий можно после сохранения веса: кнопка «Комментарий».</p>
+  <button class="arrow down" data-go="s1" aria-label="Вниз: ввод веса">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+</section>
+
 <main class="screen" id="s1">
+  <button class="arrow up" data-go="comments" aria-label="Вверх: комментарии">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
+    <span class="alert-tag"><span class="cdot"></span><span class="albl"></span></span>
+  </button>
   <section class="entry">
+    <div class="entry-head">
     <div class="date"><span id="date"></span> <button class="link" id="dayBtn" aria-expanded="false">Другой день</button></div>
     <div class="days hidden" id="days">
       <button class="chip" data-off="0">Сегодня</button>
@@ -269,6 +327,7 @@
     <div class="cal hidden" id="cal">
       <div class="cal-head" aria-hidden="true"><span>пн</span><span>вт</span><span>ср</span><span>чт</span><span>пт</span><span>сб</span><span>вс</span></div>
       <div class="cal-grid" id="calGrid"></div>
+    </div>
     </div>
 
     <div id="inputView">
@@ -302,18 +361,16 @@
 
   <button class="link hidden" id="installBtn" style="align-self:center">Установить приложение</button>
 
-  <button class="nav" id="toCharts" aria-label="Перейти к графикам">
-    Графики
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  <button class="arrow down" data-go="s2" aria-label="Вниз: графики">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
   </button>
 </main>
 
 <section class="screen screen-charts" id="s2">
-  <button class="nav up" id="toMain" aria-label="Вернуться к вводу веса">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-    Ввод веса
+  <button class="arrow up" data-go="s1" aria-label="Вверх: ввод веса">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
   </button>
-  <h2>Все трое</h2>
+  <h2>Графики</h2>
   <div class="status hidden" id="status"></div>
   <div class="rows" id="rows"></div>
 </section>
@@ -324,6 +381,9 @@
 // Вставьте сюда адрес веб-приложения из Google Apps Script (заканчивается на /exec).
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby5zCct3wlJvHDezuco-cBwI2NV3LRLD53BuiiUmptf0r35eKl2QyIB-eGpSUUL3MDl-w/exec';
 /* =================================== */
+
+// Демо-режим: если к ссылке добавить &demo=1, сайт показывает выдуманные данные и ничего не пишет в таблицу.
+const DEMO = (() => { try { return new URLSearchParams(location.search).has('demo'); } catch (e) { return false; } })();
 
 const PEOPLE = [
   { id: 'vadim', name: 'Вадим', color: 'var(--c-vadim)' },
@@ -337,6 +397,10 @@ const arrow = (dir, label) =>
 let data = { vadim: {}, ochir: {}, oyuna: {} };       // { id: { 'YYYY-MM-DD': число } }
 let comments = { vadim: {}, ochir: {}, oyuna: {} };   // { id: { 'YYYY-MM-DD': текст } }
 let views = { vadim: 'week', ochir: 'week', oyuna: 'week' };   // раскрыт один блок: week | month | stats
+let reacts = new Set();                               // 'автор|дата|кто поставил'
+let settled = false;                                  // пользователь уже сам листал экран
+let commentsVisible = false;                           // экран комментариев сейчас на виду
+let lastSig = '';                                      // отпечаток последних данных, чтобы не перерисовывать зря
 let loadState = 'loading';                            // loading | ok | error
 let mode = 'auto';                                    // auto | edit (исправление веса)
 let current = null;
@@ -351,12 +415,12 @@ const today = () => { const d = new Date(); d.setHours(12, 0, 0, 0); return d; }
 const fromKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d, 12); };
 const fmt = v => v.toFixed(1).replace('.', ',');
 const person = id => PEOPLE.find(p => p.id === id);
-const configured = () => !SCRIPT_URL.includes('ВСТАВЬТЕ');
+const configured = () => !DEMO && !SCRIPT_URL.includes('ВСТАВЬТЕ');
 
 /* ---------- демо-режим (пока не вставлен адрес скрипта) ---------- */
 let demoLoaded = false;
 function demoData() {
-  const bases = { vadim: 80.4, ochir: 95.2, oyuna: 62.6 };
+  const bases = { vadim: 92.0, ochir: 95.4, oyuna: 67.5 };
   const out = { vadim: {}, ochir: {}, oyuna: {} };
   let seed = 7;
   const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
@@ -370,6 +434,16 @@ function demoData() {
   });
   return out;
 }
+
+function demoComments() {
+  const k = n => keyOf(addDays(today(), -n));
+  return {
+    vadim: { [k(2)]: 'Вчера поздно ужинал, сегодня сам себя прощаю' },
+    ochir: { [k(1)]: 'Тренировка зашла отлично, завтра повторим' },
+    oyuna: { [k(3)]: 'Взвесилась после поездки, всё в порядке, дети!' },
+  };
+}
+function demoReacts() { return new Set([`oyuna|${keyOf(addDays(today(), -3))}|vadim`, `ochir|${keyOf(addDays(today(), -1))}|oyuna`]); }
 
 /* ---------- сеть ---------- */
 async function call(params) {
@@ -394,14 +468,24 @@ function applyRows(rows) {
   }));
   data = nd; comments = nc;
 }
+function applyReactions(list) {
+  reacts = new Set((list || []).map(r => `${r.author}|${r.date}|${r.by}`));
+}
 async function refresh() {
-  if (!configured()) { if (!demoLoaded) { data = demoData(); demoLoaded = true; } loadState = 'ok'; render(); return; }
+  if (!configured()) {
+    if (!demoLoaded) { data = demoData(); comments = demoComments(); reacts = demoReacts(); demoLoaded = true; }
+    loadState = 'ok'; render(); return;
+  }
   try {
     const res = await call({});
     if (!res.ok) throw new Error(res.error || 'Ошибка таблицы');
+    const sig = JSON.stringify([res.rows, res.reactions]);
+    if (sig === lastSig && loadState === 'ok') return;       // ничего не изменилось
+    lastSig = sig;
     applyRows(res.rows);
+    applyReactions(res.reactions);
     loadState = 'ok';
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify(res.rows)); } catch (e) {}
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ rows: res.rows, reactions: res.reactions || [] })); } catch (e) {}
   } catch (e) {
     loadState = 'error';
   }
@@ -661,7 +745,99 @@ function renderEntry() {
   else if (todays != null) setHint('Исправьте значение и сохраните.');
   else if (!hasErr) setHint('');
 }
-function render() { renderRows(); renderEntry(); renderCal(); }
+const HEART = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+const SEEN_KEY = 'streights-seen-v1';
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function latestComment(id) {
+  const ks = Object.keys(comments[id]).filter(k => comments[id][k]).sort();
+  const k = ks[ks.length - 1];
+  return k ? { k, text: comments[id][k] } : null;
+}
+let demoSeen = {};                                      // в демо-режиме «прочитано» живёт только пока открыта страница
+function loadSeen() {
+  if (!configured()) return demoSeen;
+  try { return JSON.parse(localStorage.getItem(SEEN_KEY)) || {}; } catch (e) { return {}; }
+}
+function myReactionKeys() {
+  const c = latestComment(current);
+  return c ? PEOPLE.filter(r => r.id !== current).map(r => `${current}|${c.k}|${r.id}`).filter(k => reacts.has(k)) : [];
+}
+function markSeen() {
+  const seen = loadSeen();
+  PEOPLE.forEach(p => { const c = latestComment(p.id); if (c) seen[p.id] = c.k; });
+  seen.reactions = myReactionKeys();
+  if (!configured()) { demoSeen = seen; return; }
+  try { localStorage.setItem(SEEN_KEY, JSON.stringify(seen)); } catch (e) {}
+}
+function unseenInfo() {
+  const seen = loadSeen();
+  const comments = PEOPLE.filter(p => { const c = latestComment(p.id); return p.id !== current && c && c.k > (seen[p.id] || ''); }).length;
+  const known = new Set(seen.reactions || []);
+  const reactions = myReactionKeys().filter(k => !known.has(k)).length;
+  return { comments, reactions };
+}
+function hasUnseen() { const u = unseenInfo(); return u.comments + u.reactions > 0; }
+function unseenLabel(u) {
+  if (u.comments && u.reactions) return 'Новое в комментариях';
+  if (u.comments) return u.comments === 1 ? 'Новый комментарий' : 'Новые комментарии';
+  return u.reactions === 1 ? 'Новая реакция' : 'Новые реакции';
+}
+function updateCue() {
+  const u = unseenInfo();
+  const alert = !commentsVisible && u.comments + u.reactions > 0;
+  const label = alert ? unseenLabel(u) : '';
+  document.querySelectorAll('[data-go="comments"]').forEach(b => {
+    b.classList.toggle('alert', alert);
+    const l = b.querySelector('.albl'); if (l) l.textContent = label;
+    b.setAttribute('aria-label', alert ? `${label}. Перейти к комментариям` : 'Вверх: комментарии');
+  });
+}
+
+function renderComments() {
+  if (!current) return;
+  $('clist').innerHTML = PEOPLE.map(p => {
+    const head = `<div class="c-head"><div class="name"><span class="dot"></span>${p.name}</div>`;
+    const c = latestComment(p.id);
+    if (!c) return `<article class="blk ccard" style="--accent:${p.color}">${head}</div><div class="c-empty">${p.id === current ? 'Комментариев пока нет' : 'Комментария пока нет. Когда он появится, здесь можно будет поставить сердечко.'}</div></article>`;
+    const when = `${fromKey(c.k).toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })} · ${agoText(c.k)}`;
+    // своё сердечко: приглашение в твоём цвете; чужие сердечки видны, только когда они поставлены
+    const parts = [];
+    PEOPLE.filter(r => r.id !== p.id).forEach(r => {
+      const on = reacts.has(`${p.id}|${c.k}|${r.id}`);
+      if (r.id === current) {
+        parts.push(`<button class="heart${on ? ' on' : ' offer'}" style="--hc:${r.color}" data-author="${p.id}" data-date="${c.k}" aria-pressed="${on}"
+          aria-label="${on ? 'Убрать сердечко' : 'Поставить сердечко'}">${HEART}${on ? 'Вы' : 'Поставить'}</button>`);
+      } else if (on) {
+        parts.push(`<span class="heart on" style="--hc:${r.color}" aria-label="Сердечко от ${r.name}">${HEART}${r.name}</span>`);
+      }
+    });
+    const hearts = parts.length ? parts.join('') : (p.id === current ? '<div class="c-empty">Пока без реакций</div>' : '');
+    return `<article class="blk ccard" style="--accent:${p.color}">${head}<div class="c-date">${when}</div></div>
+      <p class="c-text">${esc(c.text)}</p><div class="c-hearts">${hearts}</div></article>`;
+  }).join('');
+  if (commentsVisible) markSeen();
+  updateCue();
+}
+
+async function toggleHeart(btn) {
+  const key = `${btn.dataset.author}|${btn.dataset.date}|${current}`;
+  const on = !reacts.has(key);
+  if (on) reacts.add(key); else reacts.delete(key);
+  renderComments();
+  if (!configured()) { toast('Демо: сердечко не сохраняется'); return; }
+  try {
+    const res = await call({ action: 'react', person: current, author: btn.dataset.author, date: btn.dataset.date, on: on ? '1' : '0' });
+    if (!res.ok) throw new Error(res.error || 'Ошибка таблицы');
+    if (res.rows) throw new Error('скрипт в Google ещё не обновлён (нужна новая версия Code.gs)');
+  } catch (e) {
+    if (on) reacts.delete(key); else reacts.add(key);      // откатываем
+    renderComments();
+    toast('Не удалось сохранить: ' + explain(e));
+  }
+}
+
+function render() { renderRows(); renderEntry(); renderCal(); renderComments(); }
 
 async function save() {
   const v = parseFloat($('w').value.trim().replace(',', '.'));
@@ -713,10 +889,11 @@ async function saveComment() {
 
 /* ---------- запуск ---------- */
 function pickPerson(id) {
-  try { history.replaceState(null, '', '?u=' + id); } catch (e) {}
+  try { history.replaceState(null, '', '?u=' + id + (DEMO ? '&demo=1' : '')); } catch (e) {}
   $('chooser').classList.add('hidden');
   $('s1').classList.remove('hidden');
   $('s2').classList.remove('hidden');
+  $('comments').classList.remove('hidden');
   start(person(id));
 }
 
@@ -725,12 +902,31 @@ function pickPerson(id) {
   try { id = new URLSearchParams(location.search).get('u'); } catch (e) {}
   const p = person(id);
   if (!p) {
-    $('s1').classList.add('hidden'); $('s2').classList.add('hidden'); $('chooser').classList.remove('hidden');
+    $('s1').classList.add('hidden'); $('s2').classList.add('hidden'); $('comments').classList.add('hidden'); $('chooser').classList.remove('hidden');
     document.querySelectorAll('#chooser button').forEach(b => b.addEventListener('click', () => pickPerson(b.dataset.u)));
     return;
   }
   start(p);
 })();
+
+// Экран ввода веса в середине: при открытии всегда показываем именно его, комментарии остаются сверху, графики снизу.
+function goHome() {
+  if (settled) return;
+  const t = $('s1').offsetTop;
+  if (Math.abs(window.scrollY - t) > 2) window.scrollTo({ top: t, behavior: 'instant' });
+}
+function armHome() {
+  settled = false;
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  goHome();
+  requestAnimationFrame(() => requestAnimationFrame(goHome));
+  [150, 500, 1200].forEach(t => setTimeout(goHome, t));       // на случай, если экран ещё перестраивается
+  window.addEventListener('load', goHome, { once: true });
+  window.addEventListener('pageshow', goHome);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(goHome);
+  // как только человек сам начал листать, больше не вмешиваемся
+  ['touchstart', 'wheel', 'keydown', 'pointerdown'].forEach(ev => window.addEventListener(ev, () => { settled = true; }, { passive: true, once: true }));
+}
 
 function setManifest(id) {
   let l = document.querySelector('link[rel="manifest"]');
@@ -756,9 +952,14 @@ function start(p) {
   day = keyOf(today()); followToday = true;
   renderDate();
 
-  try { const c = JSON.parse(localStorage.getItem(CACHE_KEY)); if (Array.isArray(c)) { applyRows(c); loadState = 'ok'; } } catch (e) {}
+  try {
+    const c = JSON.parse(localStorage.getItem(CACHE_KEY));
+    if (Array.isArray(c)) { applyRows(c); loadState = 'ok'; }
+    else if (c && Array.isArray(c.rows)) { applyRows(c.rows); applyReactions(c.reactions); loadState = 'ok'; }
+  } catch (e) {}
   render();
-  refresh();
+  armHome();
+  refresh().then(goHome);
 
   $('dayBtn').addEventListener('click', () => {
     const box = $('days'); box.classList.toggle('hidden');
@@ -792,14 +993,25 @@ function start(p) {
     if (opening) { $('commentText').value = comments[current][day] || ''; $('commentText').focus(); }
   });
   $('commentSave').addEventListener('click', saveComment);
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => $(b.dataset.go).scrollIntoView({ behavior: 'smooth' })));
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => {
+      commentsVisible = es[0].isIntersecting;
+      if (commentsVisible) { markSeen(); refresh(); }
+      updateCue();
+    }, { threshold: 0.6 }).observe($('comments'));
+  }
+  $('clist').addEventListener('click', e => {
+    const b = e.target.closest('.heart');
+    if (b && !b.disabled) toggleHeart(b);
+  });
   $('rows').addEventListener('click', e => {
     const tab = e.target.closest('.tabface'), stab = e.target.closest('.stab');
     const b = tab || stab; if (!b) return;
     const id = b.dataset.id;
     setView(b.closest('.row'), id, tab ? tab.dataset.view : (views[id] === 'stats' ? 'week' : 'stats'));
   });
-  $('toCharts').addEventListener('click', () => $('s2').scrollIntoView({ behavior: 'smooth' }));
-  $('toMain').addEventListener('click', () => $('s1').scrollIntoView({ behavior: 'smooth' }));
+  setInterval(() => { if (!document.hidden) refresh(); }, 60000);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) return;
     if (followToday && day !== keyOf(today())) day = keyOf(today());
